@@ -1,0 +1,78 @@
+<script>
+  $(document).ready(function () {
+    $('#change_password_form').on('submit', function (event) {
+      event.preventDefault()
+      var current_password = $('#current_password').val()
+      var new_password = $('#new_password').val()
+      var confirm_new_password = $('#confirm_new_password').val()
+  
+      if (new_password !== confirm_new_password) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Passwords do not match!',
+          text: 'Please ensure the new password and confirm password match.'
+        })
+        return
+      }
+  
+      $.ajax({
+        url: "{% url 'profile' %}",
+        type: 'POST',
+        data: {
+          current_password: current_password,
+          new_password: new_password,
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function (response) {
+          if (response.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Password changed successfully!',
+              text: 'You will reload page in 3 seconds!'
+              //text: 'You will be redirected to the login page in 3 seconds.'
+            })
+            setTimeout(function () {
+              //window.location.href = '/logout/'
+              window.location.reload()
+            }, 3000)
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: response.error
+            })
+          }
+        },
+        error: function (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'An error occurred!',
+            text: 'Please try again later.'
+          })
+        }
+      })
+  
+      return false
+  
+      // Reset form
+      $('#current_password').val('')
+      $('#new_password').val('')
+      $('#confirm_new_password').val('')
+    })
+  
+    // Password visibility toggle
+    $('.toggle-password').on('click', function () {
+      var target = $(this).data('target')
+      var input = $('#' + target)
+      var icon = $(this).find('i')
+  
+      if (input.attr('type') === 'password') {
+        input.attr('type', 'text')
+        icon.removeClass('fa-eye').addClass('fa-eye-slash') // เปลี่ยนไอคอนเป็น "ปิดตา"
+      } else {
+        input.attr('type', 'password')
+        icon.removeClass('fa-eye-slash').addClass('fa-eye') // เปลี่ยนไอคอนเป็น "เปิดตา"
+      }
+    })
+  })
+</script>

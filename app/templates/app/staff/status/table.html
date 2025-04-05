@@ -1,0 +1,89 @@
+<div class="table-responsive">
+  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>สถานะ</th>
+        <th>ชื่อผู้แจ้ง</th>
+        <th>เบอร์โทร</th>
+        <th>ประเภทของอุปกรณ์</th>
+        <th>หัวข้อ</th>
+        <th>วันที่แจ้งซ่อม</th>
+        <th>วันที่รับเรื่อง</th>
+        <th>วันที่เสร็จสิ้น</th>
+        <th>ชื่อช่าง</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>ID</th>
+        <th>สถานะ</th>
+        <th>ชื่อผู้แจ้ง</th>
+        <th>เบอร์โทร</th>
+        <th>ประเภทของอุปกรณ์</th>
+        <th>หัวข้อ</th>
+        <th>วันที่แจ้งซ่อม</th>
+        <th>วันที่รับเรื่อง</th>
+        <th>วันที่เสร็จสิ้น</th>
+        <th>ชื่อช่าง</th>
+        <th>Action</th>
+      </tr>
+    </tfoot>
+    <tbody>
+      {% for report in reports %}
+        <tr data-id="{{ report.id }}"
+          data-request-name="{{ report.user.first_name }} {{ report.user.last_name }}"
+          data-request-tel="{{ report.user.tel }}"
+          data-equipment-type="{{ report.equipment_type.name }}"
+          data-status="{{ report.status.name }}"
+          data-title="{{ report.title }}"
+          data-created-at="{{ report.created_at|date:'d/m/y H:i' }}"
+          data-start-date="{{ report.start_date|date:'d/m/y H:i' }}"
+          data-end-date="{{ report.end_date|date:'d/m/y H:i' }}"
+          data-detail="{{ report.detail }}"
+          data-staff="{{ report.staff.id }}"
+          data-staff-name="{{ report.staff.first_name }} {{ report.staff.last_name }}"
+          data-remark="{{ report.remark }}"
+          data-images="
+            {% for image in report.images.all %}
+            {{ image.image.url }}{% if not forloop.last %},{% endif %}
+          {% endfor %}
+            ">
+          <td>{{ report.id }}</td>
+          <td>
+            <span class="badge badge-pill p-2 
+              {% if report.status.sequence == 0 or report.status.sequence == 1 %}badge-warning{% endif %}
+              {% if report.status.sequence == 2 %}badge-primary{% endif %}
+              {% if report.status.sequence == 3 %}badge-success{% endif %}
+              {% if report.status.sequence == 4 %}badge-danger{% endif %}
+            ">{{ report.status.name }}</span>
+          </td>
+          <td>{{ request.user.first_name }} {{ request.user.last_name }}</td>
+          <td>{{ request.user.tel }}</td>
+          <td>{{ report.equipment_type.name }}</td>
+          <td>{{ report.title }}</td>
+          <td>{{ report.created_at|date:'d/m/y H:i' }}</td>
+          <td>
+            {% if report.start_date != null %}{{ report.start_date|date:'d/m/y H:i' }}{% endif %}
+          </td>
+          <td>
+            {% if report.end_date != null %}{{ report.end_date|date:'d/m/y H:i' }}{% endif %}
+          </td>
+          <td>{{ report.staff.first_name }} {{ report.staff.last_name }}</td>
+          <td>
+            <div class="d-flex flex-wrap justify-content-center">
+              <button class="btn btn-primary shadow-sm btn-detail mb-1 mx-1" data-id="{{ report.id }}">Detail</button>
+              {% if report.status.sequence == 1 %}
+                <button class="btn btn-primary shadow-sm btn-accept mb-1 mx-1" data-id="{{ report.id }}">รับงาน</button>
+              {% endif %}
+              {% if report.status.sequence == 2 %}
+                <button class="btn btn-primary shadow-sm btn-send mb-1 mx-1" data-id="{{ report.id }}">ส่งมอบงาน</button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

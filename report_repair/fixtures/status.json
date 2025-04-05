@@ -1,0 +1,37 @@
+[
+    {
+        "model": "report_repair.reportstatus",
+        "fields": {
+            "name": "รอแอดมินอนุมัติ",
+            "sequence": 0
+        }
+    },
+    {
+        "model": "report_repair.reportstatus",
+        "fields": {
+            "name": "รอช่างรับงาน",
+            "sequence": 1
+        }
+    },
+    {
+        "model": "report_repair.reportstatus",
+        "fields": {
+            "name": "กำลังดำเนินการ",
+            "sequence": 2
+        }
+    },
+    {
+        "model": "report_repair.reportstatus",
+        "fields": {
+            "name": "ดำเนินการเสร็จสิ้น",
+            "sequence": 3
+        }
+    },
+    {
+        "model": "report_repair.reportstatus",
+        "fields": {
+            "name": "ไม่สามารถดำเนินการได้",
+            "sequence": 4
+        }
+    }
+]

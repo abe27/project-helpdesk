@@ -1,0 +1,233 @@
+{% load static %}
+<script src="{% static 'app/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'app/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<!-- Filter Table -->
+<script>
+  $(document).ready(function () {
+    var dataTable = $('#dataTable').DataTable({
+      order: [[0, 'desc']],
+      paging: false
+    })
+  
+    // Filter equipment type based on user selection
+    $('#equipmentTypeFilter').on('change', function () {
+      var selectedType = $(this).val()
+  
+      if (selectedType) {
+        dataTable
+          .column(4)
+          .search('^' + selectedType + '$', true, false)
+          .draw()
+      } else {
+        dataTable.column(4).search('').draw()
+      }
+    })
+  
+    // Filter status based on user selection
+    $('#statusFilter').on('change', function () {
+      var selectedType = $(this).val()
+  
+      if (selectedType) {
+        dataTable
+          .column(1)
+          .search('^' + selectedType + '$', true, false)
+          .draw()
+      } else {
+        dataTable.column(1).search('').draw()
+      }
+    })
+  })
+</script>
+
+<!-- Modal Details -->
+<script>
+  $(document).ready(function () {
+    // button click show modal
+    $('.btn-detail').on('click', function () {
+      var reportId = $(this).data('id')
+  
+      var reportRow = $('tr[data-id="' + reportId + '"]')
+      var imagesData = reportRow.data('images')
+      // Splitting the data string to an array of image URLs
+      var reportData = {
+        requestName: reportRow.data('request-name'),
+        requestTel: reportRow.data('request-tel'),
+        equipmentType: reportRow.data('equipment-type'),
+        status: reportRow.data('status'),
+        title: reportRow.data('title'),
+        created_at: reportRow.data('created-at'),
+        start_date: reportRow.data('start-date'),
+        end_date: reportRow.data('end-date'),
+        staffName: reportRow.data('staff-name'),
+        detail: reportRow.data('detail'),
+        remark: reportRow.data('remark'),
+        images: imagesData
+          ? imagesData.split(',').filter(function (img) {
+              return img.trim() !== ''
+            })
+          : []
+      }
+  
+      // Populate modal with report data
+      $('#modalReportId').text(reportId)
+      $('#modalRequestName').text(reportData.requestName)
+      $('#modalRequestTel').text(reportData.requestTel)
+      $('#modalEquipmentType').text(reportData.equipmentType)
+      $('#modalStatus').text(reportData.status)
+      $('#modalTitle').text(reportData.title)
+      $('#modalCreatedAt').text(reportData.created_at)
+      $('#modalStartDate').text(reportData.start_date)
+      $('#modalEndDate').text(reportData.end_date)
+      $('#modalStaffName').text(reportData.staffName)
+      $('#modalDetail').text(reportData.detail)
+      $('#modalRemark').text(reportData.remark)
+  
+      // Clear previous carousel content
+      $('#carouselIndicators').empty()
+      $('#carouselInner').empty()
+  
+      if (reportData.images.length > 0) {
+        // If there are images, show the carousel and populate it
+        reportData.images.forEach(function (image, index) {
+          var activeClass = index === 0 ? 'active' : ''
+          $('#carouselIndicators').append('<li data-target="#carouselExampleIndicators" data-slide-to="' + index + '" class="' + activeClass + '"></li>')
+          $('#carouselInner').append('<div class="carousel-item ' + activeClass + '">' + '<img src="' + image + '" class="d-block w-100" alt="Report Image">' + '</div>')
+        })
+  
+        // Show carousel
+        $('#carouselExampleIndicators').show()
+      } else {
+        // If no images, hide the carousel
+        $('#carouselExampleIndicators').hide()
+      }
+  
+      // Show the modal
+      $('#detailModal').modal('show')
+    })
+  })
+</script>
+
+<!-- Accept Job -->
+<script>
+  $(document).ready(function () {
+    $('.btn-accept').on('click', function () {
+      var reportId = $(this).data('id')
+      var remark = $(this).closest('tr').data('remark')
+  
+      // สร้าง dropdown options สำหรับพนักงาน
+      let staffOptions = `
+        {% for staff in staffs %}
+          <option value="{{ staff.id }}" {% if staffId == '{{ staff.id }}' %}selected{% endif %}>
+            {{ staff.first_name }} {{ staff.last_name }}
+          </option>
+        {% endfor %}
+      `;
+
+      // แสดง SweetAlert2 พร้อม dropdown และ textbox
+      Swal.fire({
+        title: 'รับงาน',
+        html: `
+          <div class="text-left">
+            <label for="swal-remark">หมายเหตุ</label>
+            <textarea id="swal-remark" class="form-control" placeholder="Remark">${remark}</textarea>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'รับงาน',
+        cancelButtonText: 'ยกเลิก',
+        preConfirm: () => {
+          return {
+            remark: $('#swal-remark').val()
+          }
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // ส่งข้อมูลไปยังเซิร์ฟเวอร์ผ่าน AJAX
+          $.ajax({
+            url: "{% url 'accept_report' %}",
+            type: 'POST',
+            data: {
+              report_id: reportId,
+              remark: result.value.remark,
+              csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (response) {
+              // แสดงข้อความเมื่อการมอบหมายสำเร็จ
+              Swal.fire('สำเร็จ!', 'รับงานนี้สำเร็จ', 'success').then(() => {
+                location.reload()
+              })
+            },
+            error: function () {
+              Swal.fire('ผิดพลาด!', 'ไม่สามารถรับงานนี้ได้', 'error')
+            }
+          })
+        }
+      })
+    })
+  })
+</script>
+
+<!-- Complete Job -->
+<script>
+  $(document).ready(function () {
+    $('.btn-send').on('click', function () {
+      var reportId = $(this).data('id');
+      var remark = $(this).closest('tr').data('remark');
+
+      // แสดง SweetAlert2 พร้อมปุ่มให้เลือกดำเนินการเสร็จสิ้นหรือไม่สามารถดำเนินการได้
+      Swal.fire({
+        title: 'ส่งมอบงาน',
+        html: `
+          <div class="text-left">
+            <label for="swal-remark">หมายเหตุ</label>
+            <textarea id="swal-remark" class="form-control" placeholder="Remark">${remark}</textarea>
+          </div>
+          <div class="mt-3">
+            <button id="btn-complete" class="btn btn-success">ดำเนินการเสร็จสิ้น</button>
+            <button id="btn-incomplete" class="btn btn-danger">ไม่สามารถดำเนินการได้</button>
+          </div>
+        `,
+        showCancelButton: true,
+        showConfirmButton: false, // ซ่อนปุ่ม "ยืนยัน" ของ SweetAlert
+        cancelButtonText: 'ยกเลิก',
+        didOpen: () => {
+          // ดำเนินการเมื่อคลิกปุ่ม "ดำเนินการเสร็จสิ้น"
+          $('#btn-complete').on('click', function () {
+            sendCompleteReport('complete');
+          });
+
+          // ดำเนินการเมื่อคลิกปุ่ม "ไม่สามารถดำเนินการได้"
+          $('#btn-incomplete').on('click', function () {
+            sendCompleteReport('incomplete');
+          });
+        }
+      });
+
+      // ฟังก์ชันสำหรับส่งข้อมูลไปยังเซิร์ฟเวอร์ผ่าน AJAX
+      function sendCompleteReport(completeStatus) {
+        $.ajax({
+          url: "{% url 'complete_report' %}",
+          type: 'POST',
+          data: {
+            report_id: reportId,
+            remark: $('#swal-remark').val(),
+            complete_status: completeStatus,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function (response) {
+            // แสดงข้อความเมื่อการส่งมอบสำเร็จ
+            Swal.fire('สำเร็จ!', 'การส่งมอบงานสำเร็จ', 'success').then(() => {
+              location.reload();
+            });
+          },
+          error: function () {
+            Swal.fire('ผิดพลาด!', 'ไม่สามารถส่งมอบงานได้', 'error');
+          }
+        });
+      }
+    });
+  });
+</script>

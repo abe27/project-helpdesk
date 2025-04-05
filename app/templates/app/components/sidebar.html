@@ -1,0 +1,99 @@
+<!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+  <!-- Sidebar - Brand -->
+  <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+    <div class="sidebar-brand-icon rotate-n-15">
+      <i class="fas fa-laugh-wink"></i>
+    </div>
+    <div class="sidebar-brand-text mx-3">Help Desk</div>
+  </a>
+
+  <!-- Divider -->
+  <hr class="sidebar-divider my-0" />
+
+  <!-- Nav Item - Dashboard -->
+  {% if request.user.role.name == 'admin' %}
+    <li class="nav-item {% if url == 'dashboard' %}active{% endif %}">
+      <a class="nav-link" href="/">
+        <i class="fas fa-fw fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+  {% endif %}
+
+  <!-- Divider -->
+  <hr class="sidebar-divider" />
+
+  <div id="user">
+    <!-- Heading -->
+    <div class="sidebar-heading">User</div>
+
+    <!-- Nav Item - Form -->
+    <li class="nav-item {% if url == 'form' %}active{% endif %}">
+      <a class="nav-link pb-0" href="{% url 'form' %}">
+        <i class="fas fa-fw fa-table"></i>
+        <span>Form</span>
+      </a>
+    </li>
+
+    <!-- Nav Item - Status -->
+    <li class="nav-item {% if url == 'status' %}active{% endif %}">
+      <a class="nav-link" href="{% url 'status' %}">
+        <i class="fas fa-fw fa-table"></i>
+        <span>Status</span>
+      </a>
+    </li>
+  </div>
+
+  <!-- Admin -->
+  {% if request.user.role.name == 'admin' %}
+    <div id="admin">
+      <!-- Divider -->
+      <hr class="sidebar-divider" />
+      <!-- Heading -->
+      <div class="sidebar-heading">Admin</div>
+      <!-- Nav Item - Status -->
+      <li class="nav-item {% if url == 'status_admin' %}active{% endif %}">
+        <a class="nav-link pb-0" href="{% url 'status_admin' %}">
+          <i class="fas fa-fw fa-table"></i>
+          <span>Status</span>
+        </a>
+      </li>
+
+      <li class="nav-item {% if url == 'user' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'user' %}">
+          <i class="fas fa-fw fa-table"></i>
+          <span>User</span>
+        </a>
+      </li>
+    </div>
+  {% endif %}
+
+  <!-- Staff -->
+  {% if request.user.role.name == 'admin' or request.user.role.name == 'staff' %}
+    <div id="staff">
+      <!-- Divider -->
+      <hr class="sidebar-divider" />
+      <!-- Heading -->
+      <div class="sidebar-heading">Staff</div>
+      <!-- Nav Item - Status -->
+      <li class="nav-item {% if url == 'status_staff' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'status_staff' %}">
+          <i class="fas fa-fw fa-table"></i>
+          <span>Status</span>
+        </a>
+      </li>
+    </div>
+  {% endif %}
+
+  <!-- Divider -->
+  <hr class="sidebar-divider d-none d-md-block" />
+
+  <!-- Sidebar Toggler (Sidebar) -->
+  <div class="text-center d-none d-md-inline">
+    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+  </div>
+
+  <!-- Sidebar Message -->
+</ul>
+<!-- End of Sidebar -->

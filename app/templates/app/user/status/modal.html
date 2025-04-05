@@ -1,0 +1,76 @@
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailModalLabel">Report Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <p>
+          <strong>ID:</strong> <span id="modalReportId"></span>
+        </p>
+        <p>
+          <strong>สถานะ:</strong> <span id="modalStatus"></span>
+        </p>
+        <p>
+          <strong>ประเภทของอุปกรณ์:</strong> <span id="modalEquipmentType"></span>
+        </p>
+        <p>
+          <strong>หัวข้อ:</strong> <span id="modalTitle"></span>
+        </p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="modalCreatedAt" class="form-label">วันที่แจ้งซ่อม</label>
+            <input type="text" id="modalCreatedAt" class="form-control bg-white" placeholder="วันที่แจ้งซ่อม" aria-label="วันที่แจ้งซ่อม" readonly />
+          </div>
+          <div class="col-md-4">
+            <label for="modalStartDate" class="form-label">วันที่รับเรื่อง</label>
+            <input type="text" id="modalStartDate" class="form-control bg-white" placeholder="วันที่รับเรื่อง" aria-label="วันที่รับเรื่อง" readonly />
+          </div>
+          <div class="col-md-4">
+            <label for="modalEndDate" class="form-label">วันที่เสร็จสิ้น</label>
+            <input type="text" id="modalEndDate" class="form-control bg-white" placeholder="วันที่เสร็จสิ้น" aria-label="วันที่เสร็จสิ้น" readonly />
+          </div>
+        </div>
+        <div class="row g-3 mt-3">
+          <div class="col">
+            <label for="modalStaffName" class="form-label">เจ้าหน้าที่</label>
+            <input type="text" id="modalStaffName" class="form-control bg-white" placeholder="เจ้าหน้าที่" aria-label="เจ้าหน้าที่" readonly />
+          </div>
+        </div>
+        <p class="mt-3">
+          <strong>รายละเอียด</strong>
+          <textarea class="form-control bg-white" name="modalDetail" id="modalDetail" placeholder="Detail" rows="5" readonly></textarea>
+        </p>
+        <p>
+          <strong>หมายเหตุ:</strong>
+          <textarea class="form-control bg-white" name="modalRemark" id="modalRemark" placeholder="Remark" rows="5" readonly></textarea>
+        </p>
+      </div>
+
+      <!-- Carousel for Images -->
+      <div class="container">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+          <ol class="carousel-indicators" id="carouselIndicators">
+            <!-- Indicators will be appended here -->
+          </ol>
+          <div class="carousel-inner" id="carouselInner">
+            <!-- Images will be appended here -->
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block link %}
+  <link href="{% static 'app/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+  <style>
+    .carousel-item img {
+      height: 400px; /* กำหนดความสูงของรูปภาพ */
+      object-fit: cover; /* ทำให้รูปภาพครอบคลุมพื้นที่ที่กำหนดโดยไม่เสียสัดส่วน */
+    }
+  </style>
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    {% include 'app/components/sidebar.html' %}
+    <!-- End Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Navbar -->
+        {% include 'app/components/navbar.html' %}
+        <!-- End Navbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h1 class="h3 mb-3 text-gray-800">สถานะการแจ้งซ่อม</h1>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">ตารางแสดงสถานะการแจ้งซ่อม</h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="equipmentTypeFilter">Filter by Equipment Type:</label>
+                  <select id="equipmentTypeFilter" class="form-control">
+                    <option value="">All</option>
+                    {% for equipment_type in equipment_types %}
+                      <option value="{{ equipment_type.name }}">{{ equipment_type.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col mb-3">
+                  <label for="statusFilter">Filter by Status:</label>
+                  <select id="statusFilter" class="form-control">
+                    <option value="">All</option>
+                    {% for status in reportStatus %}
+                      <option value="{{ status.name }}">{{ status.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              {% include 'app/user/status/table.html' %}
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      {% include 'app/components/footer.html' %}
+      <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button -->
+  <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+
+  <!-- Detail Modal -->
+  {% include 'app/user/status/modal.html' %}
+
+  <!-- Page level plugins -->
+  {% include './script.html' %}
+{% endblock %}

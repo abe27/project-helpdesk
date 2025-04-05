@@ -1,0 +1,151 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block link %}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}
+
+{% block content %}
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    {% include 'app/components/sidebar.html' %}
+    <!-- End Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Navbar -->
+        {% include 'app/components/navbar.html' %}
+        <!-- End Navbar -->
+
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">แจ้งซ่อม</h1>
+          </div>
+        </div>
+
+        <div class="container mb-5">
+          <div class="card shadow-sm">
+            <div class="card-header font-weight-bold text-primary">แบบฟอร์มแจ้งซ่อม</div>
+            <div class="card-body">
+              <form id="report">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="equipment_type">อุปกรณ์</label>
+                      <select class="form-control" name="equipment_type" id="equipment_type" required>
+                        <option selected>Choose a equipment type</option>
+                        {% for equipment_type in equipment_types %}
+                          <option value="{{ equipment_type.id }}">{{ equipment_type.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col">
+                    <label for="title" class="form-label">หัวข้อ</label>
+                    <input type="text" class="form-control" name="title" id="title" placeholder="หัวข้อ" required />
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col">
+                    <label for="detail" class="form-label">รายละเอียด</label>
+                    <textarea class="form-control" name="detail" id="detail" placeholder="รายละเอียด" rows="5" required></textarea>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label for="images" class="form-label">รูปภาพ</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Upload</span>
+                      </div>
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="images" name="images" multiple />
+                        <label class="custom-file-label" for="images">Choose files</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col d-flex">
+                    <button class="btn btn-primary mx-auto" type="submit">Submit</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Main Content -->
+
+      <!-- Footer -->
+      {% include 'app/components/footer.html' %}
+      <!-- End of Footer -->
+    </div>
+    <!-- Content Wrapper -->
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $('#images').on('change', function () {
+        var fileName = Array.from(this.files)
+          .map(function (file) {
+            return file.name
+          })
+          .join(', ')
+        $(this)
+          .next('.custom-file-label')
+          .html(fileName || 'Choose files')
+      })
+    })
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $('#report').on('submit', function (e) {
+        e.preventDefault() // หยุดการรีเฟรชหน้าเว็บ
+        var selectedEquipment = $('#equipment_type').val()
+    
+        if (selectedEquipment === 'Choose a equipment type') {
+          showToast('กรุณาเลือกประเภทอุปกรณ์ก่อนส่งฟอร์ม', 'warning')
+          return
+        }
+    
+        var formData = new FormData(this)
+    
+        $.ajax({
+          type: 'POST',
+          url: "{% url 'form' %}",
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            if (response.success) {
+              showToast('Report submitted successfully.', 'success')
+              $('#report')[0].reset() // เคลียร์ฟอร์มทั้งหมด
+              $('#images').val('') // เคลียร์ input ของ image
+              $('.custom-file-label').html('Choose files') // รีเซ็ตชื่อไฟล์
+            }
+          },
+          error: function (error) {
+            showToast('An error occurred.', 'error')
+          }
+        })
+      })
+    })
+    
+    function showToast(message, type) {
+      Swal.fire({
+        title: message,
+        icon: type, // ใช้ 'success', 'error', 'warning', 'info', หรือ 'question'
+        showConfirmButton: true,
+        timer: 3000
+      })
+    }
+  </script>
+{% endblock %}

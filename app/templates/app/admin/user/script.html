@@ -1,0 +1,197 @@
+{% load static %}
+<script src="{% static 'app/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'app/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<!-- Table -->
+<script>
+  $(document).ready(function () {
+    var dataTable = $('#dataTable').DataTable({
+      order: [[0, 'desc']],
+      paging: false
+    })
+  })
+</script>
+
+<!-- Modal Details -->
+<script>
+  $(document).ready(function () {
+    // button click show modal
+    $('.btn-detail').on('click', function () {
+      var reportId = $(this).data('id')
+  
+      var reportRow = $('tr[data-id="' + reportId + '"]')
+      var imagesData = reportRow.data('images')
+      // Splitting the data string to an array of image URLs
+      var reportData = {
+        requestName: reportRow.data('request-name'),
+        requestTel: reportRow.data('request-tel'),
+        equipmentType: reportRow.data('equipment-type'),
+        status: reportRow.data('status'),
+        title: reportRow.data('title'),
+        created_at: reportRow.data('created-at'),
+        start_date: reportRow.data('start-date'),
+        end_date: reportRow.data('end-date'),
+        staffName: reportRow.data('staff-name'),
+        detail: reportRow.data('detail'),
+        remark: reportRow.data('remark'),
+        images: imagesData
+          ? imagesData.split(',').filter(function (img) {
+              return img.trim() !== ''
+            })
+          : []
+      }
+  
+      // Populate modal with report data
+      $('#modalReportId').text(reportId)
+      $('#modalRequestName').text(reportData.requestName)
+      $('#modalRequestTel').text(reportData.requestTel)
+      $('#modalEquipmentType').text(reportData.equipmentType)
+      $('#modalStatus').text(reportData.status)
+      $('#modalTitle').text(reportData.title)
+      $('#modalCreatedAt').text(reportData.created_at)
+      $('#modalStartDate').text(reportData.start_date)
+      $('#modalEndDate').text(reportData.end_date)
+      $('#modalStaffName').text(reportData.staffName)
+      $('#modalDetail').text(reportData.detail)
+      $('#modalRemark').text(reportData.remark)
+  
+      // Clear previous carousel content
+      $('#carouselIndicators').empty()
+      $('#carouselInner').empty()
+  
+      if (reportData.images.length > 0) {
+        // If there are images, show the carousel and populate it
+        reportData.images.forEach(function (image, index) {
+          var activeClass = index === 0 ? 'active' : ''
+          $('#carouselIndicators').append('<li data-target="#carouselExampleIndicators" data-slide-to="' + index + '" class="' + activeClass + '"></li>')
+          $('#carouselInner').append('<div class="carousel-item ' + activeClass + '">' + '<img src="' + image + '" class="d-block w-100" alt="Report Image">' + '</div>')
+        })
+  
+        // Show carousel
+        $('#carouselExampleIndicators').show()
+      } else {
+        // If no images, hide the carousel
+        $('#carouselExampleIndicators').hide()
+      }
+  
+      // Show the modal
+      $('#detailModal').modal('show')
+    })
+  })
+</script>
+
+<!-- Update Status -->
+<script>
+  function updateStatus(checkbox) {
+    const userId = checkbox.getAttribute('data-user-id')
+    const isActive = checkbox.checked
+  
+    // ส่งคำขอ AJAX
+    $.ajax({
+      url: '{% url "update_user_status" %}',
+      method: 'POST',
+      data: {
+        user_id: userId,
+        is_active: isActive,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (response) {
+        Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ',
+          text: response.message,
+          timer: 2000,
+          showConfirmButton: false
+        })
+      },
+      error: function (xhr) {
+        Swal.fire({
+          icon: 'error',
+          title: 'ข้อผิดพลาด',
+          text: xhr.responseJSON.message || 'เกิดข้อผิดพลาด'
+        })
+  
+        // ย้อนกลับสถานะเช็คบ็อกซ์
+        checkbox.checked = !isActive
+      }
+    })
+  }
+</script>
+
+<!-- Reset Password -->
+<script>
+  function openResetPasswordModal(button) {
+    const userId = button.getAttribute('data-user-id')
+    $('#resetUserId').val(userId) // กำหนดค่า ID ผู้ใช้ในฟอร์ม
+    $('#resetPasswordModal').modal('show') // เปิด Modal
+  }
+  
+  function submitResetPassword() {
+    const userId = $('#resetUserId').val()
+    const newPassword = $('#newPassword').val()
+    const confirmPassword = $('#confirmPassword').val()
+  
+    if (newPassword !== confirmPassword) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ข้อผิดพลาด',
+        text: 'รหัสผ่านไม่ตรงกัน'
+      })
+      return
+    }
+  
+    $.ajax({
+      url: '{% url "reset_password" %}',
+      method: 'POST',
+      data: {
+        user_id: userId,
+        new_password: newPassword,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function (response) {
+        Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ',
+          text: response.message
+        })
+        $('#resetPasswordModal').modal('hide') // ปิด Modal
+      },
+      error: function (xhr) {
+        Swal.fire({
+          icon: 'error',
+          title: 'ข้อผิดพลาด',
+          text: xhr.responseJSON.message || 'เกิดข้อผิดพลาด'
+        })
+      }
+    })
+  }
+</script>
+
+<script>
+  $(document).ready(function () {
+    $('.edit-btn').click(function () {
+      var user_id = $(this).data('user-id')
+      var emp_id = $(this).data('emp-id')
+      var email = $(this).data('email')
+      var username = $(this).data('username')
+      var first_name = $(this).data('firstname')
+      var last_name = $(this).data('lastname')
+      var tel = $(this).data('tel')
+      var department = $(this).data('department')
+  
+      // ตั้งค่าข้อมูลในฟอร์ม
+      $('#user_id').val(user_id)
+      $('#emp_id').val(emp_id)
+      $('#email').val(email)
+      $('#username').val(username)
+      $('#first_name').val(first_name)
+      $('#last_name').val(last_name)
+      $('#tel').val(tel)
+      $('#department').val(department)
+  
+      $('#modalEdit').modal('show')
+    })
+  })
+</script>

@@ -1,0 +1,95 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block body_class %}
+  bg-gradient-primary
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+      <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+          <div class="col-lg-5 d-none d-lg-flex">
+            <a href="http://www.freepik.com" class="d-flex my-auto" target="_blank"><img src="{% static 'app/img/signin.jpg' %}" class="img-fluid" alt="Designed by Freepik" /></a>
+          </div>
+          <div class="col-lg-7">
+            <div class="p-5">
+              <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+              </div>
+              <form class="user" method="POST" action="{% url 'signup' %}">
+                {% csrf_token %}
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="first_name">First Name</label>
+                    <input type="text" name="first_name" class="form-control" placeholder="First Name" required />
+                  </div>
+                  <div class="col-sm-6">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" name="last_name" class="form-control" placeholder="Last Name" required />
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="emp_id">Employee ID</label>
+                    <input type="text" name="emp_id" class="form-control" placeholder="Employee ID" required />
+                  </div>
+                  <div class="col-sm-6">
+                    <label for="tel">Phone Number</label>
+                    <input type="text" name="tel" class="form-control" placeholder="Phone Number" required />
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="company">Company</label>
+                    <select name="company" class="form-control" required>
+                      <option value="" selected disabled>Select Company</option>
+                      {% for company in companies %}
+                        <option value="{{ company.id }}">{{ company.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-sm-6">
+                    <label for="department">Department</label>
+                    <select name="department" class="form-control" required>
+                      <option value="" selected disabled>Select Department</option>
+                      {% for department in departments %}
+                        <option value="{{ department.id }}">{{ department.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="Username" required />
+                  </div>
+                  <div class="col-sm-6">
+                    <label for="email">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="Email Address" required />
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <label for="password1">Password</label>
+                    <input type="password" name="password1" class="form-control" placeholder="Password" required />
+                  </div>
+                  <div class="col-sm-6">
+                    <label for="password2">Confirm Password</label>
+                    <input type="password" name="password2" class="form-control" placeholder="Confirm Password" required />
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block rounded">Register Account</button>
+              </form>
+              <hr />
+              <div class="text-center">
+                <a class="small" href="{% url 'signin' %}">Already have an account? Login!</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

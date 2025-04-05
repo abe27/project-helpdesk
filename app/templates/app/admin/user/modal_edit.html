@@ -1,0 +1,50 @@
+<div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditLabel">แก้ไขผู้ใช้</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form id="editUserForm" method="post" enctype="multipart/form-data" action="{% url 'edit_user_admin' %}">
+          {% csrf_token %}
+          <input type="hidden" id="user_id" name="user_id" />
+          <div class="form-group">
+            <label for="emp_id">รหัสพนักงาน</label>
+            <input type="text" class="form-control" id="emp_id" name="emp_id" required />
+          </div>
+          <div class="form-group">
+            <label for="email">อีเมล</label>
+            <input type="email" class="form-control" id="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="username">ชื่อผู้ใช้</label>
+            <input type="text" class="form-control" id="username" name="username" required />
+          </div>
+          <div class="form-group">
+            <label for="first_name">ชื่อจริง</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required />
+          </div>
+          <div class="form-group">
+            <label for="last_name">นามสกุล</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" required />
+          </div>
+          <div class="form-group">
+            <label for="tel">เบอร์โทร</label>
+            <input type="text" class="form-control" id="tel" name="tel" required />
+          </div>
+          <div class="form-group">
+            <label for="department">แผนก</label>
+            <select class="form-control" id="department" name="department" required>
+              <option value="" disabled>-- กรุณาเลือกแผนก --</option>
+              {% for department in departments %}
+                <option value="{{ department.id }}">{{ department.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">บันทึก</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

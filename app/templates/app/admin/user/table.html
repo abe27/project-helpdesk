@@ -1,0 +1,80 @@
+<div class="table-responsive">
+  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Role</th>
+        <th>ชื่อพนักงาน</th>
+        <th>เบอร์โทร</th>
+        <th>บริษัท</th>
+        <th>แผนก</th>
+        <th>วันที่สมัคร</th>
+        <th>เข้าสู่ระบบล่าสุด</th>
+        <th>สถานะ</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>ID</th>
+        <th>สถานะ</th>
+        <th>ชื่อพนักงาน</th>
+        <th>เบอร์โทร</th>
+        <th>บริษัท</th>
+        <th>แผนก</th>
+        <th>วันที่สมัคร</th>
+        <th>เข้าสู่ระบบล่าสุด</th>
+        <th>สถานะ</th>
+        <th>Action</th>
+      </tr>
+    </tfoot>
+    <tbody>
+      {% for user in users %}
+        <tr data-id="{{ user.id }}"
+            data-name="{{ user.first_name }} {{ user.last_name }}"
+            data-tel="{{ user.tel }}"
+            data-role="{{ user.role.name }}"
+            data-company="{{ user.company.name }}"
+            data-department="{{ user.department.name }}"
+            data-date-joined="{{ user.date_joined|date:'d/m/y H:i' }}"
+            data-last-login="{{ user.last_login|date:'d/m/y H:i' }}">
+          <td>{{ user.id }}</td>
+          <td>
+            <span class="badge badge-pill p-2 badge-primary">{{ user.role.name }}</span>
+          </td>
+          <td>{{ user.first_name }} {{ user.last_name }}</td>
+          <td>{{ user.tel }}</td>
+          <td>{{ user.company.name }}</td>
+          <td>{{ user.department.name }}</td>
+          <td>{{ user.date_joined|date:'d/m/y H:i' }}</td>
+          <td>{{ user.last_login|date:'d/m/y H:i' }}</td>
+          <td class="text-center">
+            {% if user.is_active %}
+              <input type="checkbox" checked data-user-id="{{ user.id }}" onchange="updateStatus(this)" />
+            {% else %}
+              <input type="checkbox" data-user-id="{{ user.id }}" onchange="updateStatus(this)" />
+            {% endif %}
+          </td>
+          <td>
+            <div class="d-flex flex-wrap justify-content-center">
+              <button class="btn btn-primary shadow-sm edit-btn m-1" 
+                data-user-id="{{ user.id }}" 
+                data-emp-id="{{ user.emp_id }}"
+                data-email="{{ user.email }}" 
+                data-username="{{ user.username }}" 
+                data-firstname="{{ user.first_name }}" 
+                data-lastname="{{ user.last_name }}"
+                data-tel="{{ user.tel }}"
+                data-department="{{ user.company.id }}" 
+                data-bs-toggle="modal"
+                data-bs-target="#modalEdit">
+                แก้ไข
+              </button>
+              <button class="btn btn-danger shadow-sm m-1" data-user-id="{{ user.id }}" onclick="openResetPasswordModal(this)">รีเซ็ตรหัสผ่าน</button>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

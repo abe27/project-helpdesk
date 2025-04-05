@@ -1,0 +1,131 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block link %}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}
+
+{% block content %}
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    {% include 'app/components/sidebar.html' %}
+    <!-- End Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Navbar -->
+        {% include 'app/components/navbar.html' %}
+        <!-- End Navbar -->
+
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Profile</h1>
+          </div>
+        </div>
+
+        <div class="container mb-5">
+          <div class="card shadow-sm">
+            <div class="card-header font-weight-bold text-primary">Profile</div>
+            <div class="card-body">
+              <div class="row row-cols-1 row-cols-md-2">
+                <div class="form-group col">
+                  <label for="username">Username</label>
+                  <input type="text" class="form-control" id="username" value="{{ request.user.username }}" readonly />
+                </div>
+                <div class="form-group col">
+                  <label for="email">Email</label>
+                  <input type="text" class="form-control" id="email" value="{{ request.user.email }}" readonly />
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col">
+                  <label for="firstname">Firstname</label>
+                  <input type="text" class="form-control" id="firstname" value="{{ request.user.first_name }}" readonly />
+                </div>
+                <div class="form-group col">
+                  <label for="lastname">Lastname</label>
+                  <input type="text" class="form-control" id="lastname" value="{{ request.user.last_name }}" readonly />
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col">
+                  <label for="emp_id">Employee ID</label>
+                  <input type="text" class="form-control" id="emp_id" value="{{ request.user.emp_id }}" readonly />
+                </div>
+                <div class="form-group col">
+                  <label for="tel">Phone Number</label>
+                  <input type="text" class="form-control" id="tel" value="{{ request.user.tel }}" readonly />
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col">
+                  <label for="company">Company</label>
+                  <input type="text" class="form-control" id="company" value="{{ request.user.company.name }}" readonly />
+                </div>
+                <div class="form-group col">
+                  <label for="department">Department</label>
+                  <input type="text" class="form-control" id="department" value="{{ request.user.department.name }}" readonly />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container mb-5">
+          <form class="card shadow-sm" method="POST" id="change_password_form">
+            {% csrf_token %}
+            <div class="card-header font-weight-bold text-primary">Change Password</div>
+            <div class="card-body">
+              <div class="row">
+                <div class="form-group col-12 col-md-6">
+                  <label for="current_password">Current Password</label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="current_password" name="current_password" required />
+                    <div class="input-group-append">
+                      <button type="button" class="btn btn-outline-secondary toggle-password" data-target="current_password"><i class="fas fa-eye"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row row-cols-1 row-cols-md-2">
+                <div class="form-group col position-relative">
+                  <label for="new_password">New Password</label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="new_password" name="new_password" required />
+                    <div class="input-group-append">
+                      <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password"><i class="fas fa-eye"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col position-relative">
+                  <label for="confirm_new_password">Confirm New Password</label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" required />
+                    <div class="input-group-append">
+                      <button type="button" class="btn btn-outline-secondary toggle-password" data-target="confirm_new_password"><i class="fas fa-eye"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group mx-auto">
+                  <button type="submit" class="btn btn-primary btn-block">Change Password</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- End Main Content -->
+
+      <!-- Footer -->
+      {% include 'app/components/footer.html' %}
+      <!-- End of Footer -->
+    </div>
+    <!-- Content Wrapper -->
+  </div>
+  {% include "./script.html" %}
+{% endblock %}

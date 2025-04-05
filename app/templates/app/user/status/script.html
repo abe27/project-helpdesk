@@ -1,0 +1,106 @@
+{% load static %}
+<script src="{% static 'app/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'app/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Filter Table -->
+<script>
+  $(document).ready(function () {
+    var dataTable = $('#dataTable').DataTable({
+      order: [[0, 'desc']],
+      paging: false
+    })
+  
+    // Filter equipment type based on user selection
+    $('#equipmentTypeFilter').on('change', function () {
+      var selectedType = $(this).val()
+  
+      if (selectedType) {
+        dataTable
+          .column(2)
+          .search('^' + selectedType + '$', true, false)
+          .draw()
+      } else {
+        dataTable.column(2).search('').draw()
+      }
+    })
+  
+    // Filter status based on user selection
+    $('#statusFilter').on('change', function () {
+      var selectedType = $(this).val()
+  
+      if (selectedType) {
+        dataTable
+          .column(1)
+          .search('^' + selectedType + '$', true, false)
+          .draw()
+      } else {
+        dataTable.column(1).search('').draw()
+      }
+    })
+  })
+</script>
+
+<!-- Modal Details -->
+<script>
+  $(document).ready(function () {
+    // button click show modal
+    $('.btn-detail').on('click', function () {
+      var reportId = $(this).data('id')
+  
+      var reportRow = $('tr[data-id="' + reportId + '"]')
+      var imagesData = reportRow.data('images')
+      // Splitting the data string to an array of image URLs
+      var reportData = {
+        equipmentType: reportRow.data('equipment-type'),
+        status: reportRow.data('status'),
+        title: reportRow.data('title'),
+        created_at: reportRow.data('created-at'),
+        start_date: reportRow.data('start-date'),
+        end_date: reportRow.data('end-date'),
+        staffName: reportRow.data('staff-name'),
+        detail: reportRow.data('detail'),
+        remark: reportRow.data('remark'),
+        images: imagesData
+          ? imagesData.split(',').filter(function (img) {
+              return img.trim() !== ''
+            })
+          : []
+      }
+  
+      // Populate modal with report data
+      $('#modalReportId').text(reportId)
+      $('#modalEquipmentType').text(reportData.equipmentType)
+      $('#modalStatus').text(reportData.status)
+      $('#modalTitle').text(reportData.title)
+      $('#modalCreatedAt').val(reportData.created_at)
+      $('#modalStartDate').val(reportData.start_date)
+      $('#modalEndDate').val(reportData.end_date)
+      $('#modalStaffName').val(reportData.staffName)
+      $('#modalDetail').text(reportData.detail)
+      $('#modalRemark').text(reportData.remark)
+  
+      // Clear previous carousel content
+      $('#carouselIndicators').empty()
+      $('#carouselInner').empty()
+  
+      if (reportData.images.length > 0) {
+        //console.log(reportData.images)
+        // If there are images, show the carousel and populate it
+        reportData.images.forEach(function (image, index) {
+          var activeClass = index === 0 ? 'active' : ''
+          $('#carouselIndicators').append('<li data-target="#carouselExampleIndicators" data-slide-to="' + index + '" class="' + activeClass + '"></li>')
+          $('#carouselInner').append('<div class="carousel-item ' + activeClass + '">' + '<img src="' + image + '" class="d-block w-100" alt="Report Image">' + '</div>')
+        })
+  
+        // Show carousel
+        $('#carouselExampleIndicators').show()
+      } else {
+        // If no images, hide the carousel
+        $('#carouselExampleIndicators').hide()
+      }
+  
+      // Show the modal
+      $('#detailModal').modal('show')
+    })
+  })
+</script>
